@@ -1,11 +1,10 @@
 package ru.immagixe.TaskTracker.logic.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.immagixe.TaskTracker.security.models.Account;
+import ru.immagixe.TaskTracker.security.models.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,7 +33,7 @@ public class Task implements Serializable {
     @ManyToOne
 //    @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private Account owner;
+    private User owner;
 
     @Override
     public String toString() {

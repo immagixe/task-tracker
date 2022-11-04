@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 //@NamedEntityGraph(name = "account_entity_graph", attributeNodes = @NamedAttributeNode("tasks"))
-public class Account implements Serializable {
+public class User implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -36,11 +36,11 @@ public class Account implements Serializable {
 
     @Column(name = "role")
     private String role;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+//    fetch = FetchType.EAGER,
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Task> tasks;
 
-    public Account(String email, String password) {
+    public User(String email, String password) {
         this.email = email;
         this.password = password;
     }

@@ -5,32 +5,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.immagixe.TaskTracker.logic.dto.AccountRegisterDTO;
-import ru.immagixe.TaskTracker.logic.dto.TaskDTO;
-import ru.immagixe.TaskTracker.logic.model.Task;
-import ru.immagixe.TaskTracker.security.models.Account;
+import org.springframework.web.server.ResponseStatusException;
+import ru.immagixe.TaskTracker.logic.utils.MapperUtil;
+import ru.immagixe.TaskTracker.logic.dto.UserDTO;
+import ru.immagixe.TaskTracker.logic.dto.UserRegisterDTO;
+import ru.immagixe.TaskTracker.security.models.User;
+import ru.immagixe.TaskTracker.security.securityDetails.TaskTrackerUserDetails;
 import ru.immagixe.TaskTracker.security.services.RegistrationService;
-import ru.immagixe.TaskTracker.security.util.PersonValidator;
+import ru.immagixe.TaskTracker.security.util.EmailAlreadyExistsException;
+import ru.immagixe.TaskTracker.security.util.UserValidator;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @CrossOrigin("http://localhost:63342/")
 //@RequestMapping("/auth")
 public class AuthController {
 
     private final RegistrationService registrationService;
-    private final PersonValidator personValidator;
-    private final ModelMapper modelMapper;
+    private final UserValidator userValidator;
 
     @Autowired
-    public AuthController(PersonValidator personValidator, RegistrationService registrationService, ModelMapper modelMapper) {
-        this.personValidator = personValidator;
+    public AuthController(UserValidator userValidator, RegistrationService registrationService) {
+        this.userValidator = userValidator;
         this.registrationService = registrationService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/main")
@@ -38,40 +38,18 @@ public class AuthController {
         return "main";
     }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/registration")
-    public String registrationPage(@ModelAttribute("account") Account account) {
-        return "registration";
-    }
-
-
 //    @PostMapping(path = "/registration", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 //    public ResponseEntity<HttpStatus> postData(@ModelAttribute AccountRegisterDTO dto) {
 
-
-    @PostMapping(path = "/registration", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public String performRegistration(@ModelAttribute("account") @Valid Account account,
-                                      BindingResult bindingResult) {
-        personValidator.validate(account, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            return "registration";
+    @PostMapping(path = "/user", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<HttpStatus> performRegistration(@ModelAttribute("account") @Valid User user) {
+        try {
+            registrationService.checkEmailExists(user);
+        } catch (EmailAlreadyExistsException exc) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This email is already taken", exc);
         }
+        registrationService.register(user);
 
-
-
-        System.out.println(account.getEmail() + " " + account.getPassword());
-
-        registrationService.register(account);
-
-        return "redirect:/login";
-    }
-
-    private Account convertToAccount(AccountRegisterDTO accountRegisterDTO) {
-        return modelMapper.map(accountRegisterDTO, Account.class);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }

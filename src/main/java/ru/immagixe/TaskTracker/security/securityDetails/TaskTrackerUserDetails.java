@@ -3,34 +3,34 @@ package ru.immagixe.TaskTracker.security.securityDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.immagixe.TaskTracker.security.models.Account;
+import ru.immagixe.TaskTracker.security.models.User;
 
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
-public class AccountDetails implements UserDetails, Serializable {
+public class TaskTrackerUserDetails implements UserDetails, Serializable {
 
-    private final Account account;
+    private final User user;
 
-    public AccountDetails(Account account) {
-        this.account = account;
+    public TaskTrackerUserDetails(User user) {
+        this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(account.getRole()));
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
     }
 
     @Override
     public String getPassword() {
-        return this.account.getPassword();
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.account.getEmail();
+        return this.user.getEmail();
     }
 
     @Override
@@ -53,7 +53,11 @@ public class AccountDetails implements UserDetails, Serializable {
         return true;
     }
 
-    public Account getAccount() {
-        return this.account;
+    public User getUser() {
+//        UserDTO userDTO = new UserDTO();
+//        userDTO.setId(user.getId());
+//        userDTO.setEmail(user.getEmail());
+//        return userDTO;
+        return this.user;
     }
 }

@@ -1,83 +1,75 @@
 package ru.immagixe.TaskTracker.logic.controllers;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.immagixe.TaskTracker.logic.TaskService;
-import ru.immagixe.TaskTracker.logic.dto.AccountRegisterDTO;
 import ru.immagixe.TaskTracker.logic.dto.TaskDTO;
 import ru.immagixe.TaskTracker.logic.dto.UserDTO;
-import ru.immagixe.TaskTracker.logic.model.Task;
-import ru.immagixe.TaskTracker.logic.repositories.TaskRepository;
-import ru.immagixe.TaskTracker.security.models.Account;
-import ru.immagixe.TaskTracker.security.securityDetails.AccountDetails;
+import ru.immagixe.TaskTracker.logic.utils.MapperUtil;
+import ru.immagixe.TaskTracker.security.securityDetails.TaskTrackerUserDetails;
+import ru.immagixe.TaskTracker.security.services.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @CrossOrigin("http://localhost:63342/")
 @RestController
-public class TaskController {
+public class TaskController extends TaskControllerValidate {
 
-    private final TaskService taskService;
-    private final ModelMapper modelMapper;
+    private final MapperUtil mapperUtil;
 
     @Autowired
-    public TaskController(TaskService taskService, ModelMapper modelMapper) {
-        this.taskService = taskService;
-        this.modelMapper = modelMapper;
-    }
-
-    @PostMapping("/user")
-    public String createUser() {
-        return "heelo!";
+    public TaskController(TaskService taskService, UserService userService, MapperUtil mapperUtil) {
+        super(taskService, userService);
+        this.mapperUtil = mapperUtil;
     }
 
     @GetMapping("/user")
-    public UserDTO getUser(@AuthenticationPrincipal AccountDetails accountDetails) {
-        if (accountDetails == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
+    public UserDTO getUser(@AuthenticationPrincipal TaskTrackerUserDetails taskTrackerUserDetails) {
+        this.checkAuthorization(taskTrackerUserDetails);
 
-        return convertToAccountDTO(accountDetails.getAccount());
+        return mapperUtil.convertToUserDTO(taskTrackerUserDetails.getUser());
     }
 
     @GetMapping("/tasks")
-    public List<TaskDTO> getTasks(@AuthenticationPrincipal AccountDetails accountDetails) {
-        if (accountDetails == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
+    public List<TaskDTO> getTasks(@AuthenticationPrincipal TaskTrackerUserDetails taskTrackerUserDetails) {
+        this.checkAuthorization(taskTrackerUserDetails);
 
-        return taskService.findByOwner(accountDetails.getAccount()).stream()
-                .map(this::convertToTaskDTO)
+        return taskService.findByOwnerId(taskTrackerUserDetails.getUser().getId()).stream()
+                .map(mapperUtil::convertToTaskDTO)
                 .collect(Collectors.toList());
     }
 
-//    @PostMapping("/session")
+    @PostMapping(path = "/tasks", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<HttpStatus> addTask(@AuthenticationPrincipal TaskTrackerUserDetails taskTrackerUserDetails,
+                                              @ModelAttribute TaskDTO taskDTO) {
+        this.checkAuthorization(taskTrackerUserDetails);
 
-
-    @PostMapping(path = "/postdata", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<HttpStatus> postData(@ModelAttribute AccountRegisterDTO dto) {
-
-
-        System.out.println(dto.getEmail() + " ");
-
-
+        taskService.save(mapperUtil.convertToTask(taskDTO), userService.findByUserDetails(taskTrackerUserDetails));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    private UserDTO convertToAccountDTO(Account account) {
-        return modelMapper.map(account, UserDTO.class);
+    @PatchMapping(path = "/tasks", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<HttpStatus> updateTask(@AuthenticationPrincipal TaskTrackerUserDetails taskTrackerUserDetails,
+                                                 @ModelAttribute TaskDTO taskDTO) {
+        this.checkAuthorization(taskTrackerUserDetails);
+        this.validateAccess(taskDTO, taskTrackerUserDetails.getUser());
+
+        taskService.update(mapperUtil.convertToTask(taskDTO), userService.findByUserDetails(taskTrackerUserDetails));
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    private TaskDTO convertToTaskDTO(Task task) {
-        return modelMapper.map(task, TaskDTO.class);
+    @DeleteMapping(path = "/tasks", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<HttpStatus> deleteTask(@AuthenticationPrincipal TaskTrackerUserDetails taskTrackerUserDetails,
+                                                 @ModelAttribute TaskDTO taskDTO) {
+        this.checkAuthorization(taskTrackerUserDetails);
+        this.validateAccess(taskDTO, taskTrackerUserDetails.getUser());
+
+        taskService.delete(taskDTO.getId());
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
