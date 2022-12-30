@@ -1,15 +1,16 @@
 package ru.immagixe.TaskTracker.security.securityDetails;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.immagixe.TaskTracker.security.models.User;
-
+import ru.immagixe.TaskTracker.security.model.User;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 public class TaskTrackerUserDetails implements UserDetails, Serializable {
 
     private final User user;
@@ -51,13 +52,5 @@ public class TaskTrackerUserDetails implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public User getUser() {
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setId(user.getId());
-//        userDTO.setEmail(user.getEmail());
-//        return userDTO;
-        return this.user;
     }
 }

@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable().cors().and()
                 .authorizeRequests()
-                .antMatchers("/login", "/user", "/css/**", "/img/**", "/error", "/postdata", "/main", "/user", "/tasks").permitAll()
+                .antMatchers("/user", "/css/**", "/img/**", "/error").permitAll()
                 .anyRequest().hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin()
@@ -50,7 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/session");
-
 //        http.cors();
     }
 
@@ -67,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             httpServletResponse.setStatus(401);
         };
     }
-
 
     private AuthenticationEntryPoint authenticationEntryPoint() {
         return (httpServletRequest, httpServletResponse, e) -> {
@@ -90,7 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:63342/"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

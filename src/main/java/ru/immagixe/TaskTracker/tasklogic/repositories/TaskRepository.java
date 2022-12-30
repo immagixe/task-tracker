@@ -1,9 +1,8 @@
-package ru.immagixe.TaskTracker.logic.repositories;
+package ru.immagixe.TaskTracker.tasklogic.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.immagixe.TaskTracker.logic.model.Task;
-import ru.immagixe.TaskTracker.security.models.User;
+import ru.immagixe.TaskTracker.tasklogic.model.Task;
 
 import java.util.List;
 

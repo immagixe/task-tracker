@@ -1,4 +1,4 @@
-package ru.immagixe.TaskTracker.logic.controllers;
+package ru.immagixe.TaskTracker.tasklogic.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -6,10 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.immagixe.TaskTracker.logic.TaskService;
-import ru.immagixe.TaskTracker.logic.dto.TaskDTO;
-import ru.immagixe.TaskTracker.logic.dto.UserDTO;
-import ru.immagixe.TaskTracker.logic.utils.MapperUtil;
+import ru.immagixe.TaskTracker.tasklogic.TaskService;
+import ru.immagixe.TaskTracker.tasklogic.model.dto.TaskDTO;
+import ru.immagixe.TaskTracker.tasklogic.model.dto.UserDTO;
+import ru.immagixe.TaskTracker.tasklogic.utils.MapperUtil;
 import ru.immagixe.TaskTracker.security.securityDetails.TaskTrackerUserDetails;
 import ru.immagixe.TaskTracker.security.services.UserService;
 

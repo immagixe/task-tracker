@@ -1,12 +1,12 @@
-package ru.immagixe.TaskTracker.logic.utils;
+package ru.immagixe.TaskTracker.tasklogic.utils;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.immagixe.TaskTracker.logic.dto.TaskDTO;
-import ru.immagixe.TaskTracker.logic.dto.UserDTO;
-import ru.immagixe.TaskTracker.logic.model.Task;
-import ru.immagixe.TaskTracker.security.models.User;
+import ru.immagixe.TaskTracker.tasklogic.model.dto.TaskDTO;
+import ru.immagixe.TaskTracker.tasklogic.model.dto.UserDTO;
+import ru.immagixe.TaskTracker.tasklogic.model.Task;
+import ru.immagixe.TaskTracker.security.model.User;
 
 @Component
 public class MapperUtil {

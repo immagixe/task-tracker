@@ -1,4 +1,4 @@
-package ru.immagixe.TaskTracker.logic.dto;
+package ru.immagixe.TaskTracker.tasklogic.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;

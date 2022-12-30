@@ -1,15 +1,16 @@
-package ru.immagixe.TaskTracker.logic;
+package ru.immagixe.TaskTracker.tasklogic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.immagixe.TaskTracker.logic.model.Task;
-import ru.immagixe.TaskTracker.logic.repositories.TaskRepository;
-import ru.immagixe.TaskTracker.security.models.User;
+import ru.immagixe.TaskTracker.tasklogic.model.Task;
+import ru.immagixe.TaskTracker.tasklogic.repositories.TaskRepository;
+import ru.immagixe.TaskTracker.security.model.User;
 import ru.immagixe.TaskTracker.security.repositories.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +39,14 @@ public class TaskService {
     @Transactional
     public void save(Task task, User user) {
         task.setOwner(user);
+        task.setModified(LocalDateTime.now());
         taskRepository.save(task);
     }
 
     @Transactional
     public void update(Task updatedTask, User user) {
         updatedTask.setOwner(user);
+        updatedTask.setModified(LocalDateTime.now());
         taskRepository.save(updatedTask);
     }
 

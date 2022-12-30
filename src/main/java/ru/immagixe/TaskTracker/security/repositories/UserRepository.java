@@ -3,8 +3,7 @@ package ru.immagixe.TaskTracker.security.repositories;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.immagixe.TaskTracker.security.models.User;
-
+import ru.immagixe.TaskTracker.security.model.User;
 
 import java.util.Optional;
 

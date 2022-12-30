@@ -1,13 +1,14 @@
-package ru.immagixe.TaskTracker.logic.model;
+package ru.immagixe.TaskTracker.tasklogic.model;
 
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.immagixe.TaskTracker.security.models.User;
+import ru.immagixe.TaskTracker.security.model.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="tasks")
@@ -29,6 +30,9 @@ public class Task implements Serializable {
 
     @Column(name = "status_active")
     private boolean statusActive;
+
+    @Column(name = "modified")
+    private LocalDateTime modified;
 
     @ManyToOne
 //    @JsonIgnore

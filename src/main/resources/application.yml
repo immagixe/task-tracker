@@ -24,3 +24,8 @@ spring:
   redis:
     host: localhost
     port: 6379
+
+rabbit:
+  queue: EMAIL_SENDING_TASKS
+  exchange: exchange
+  routing-key: '#'
